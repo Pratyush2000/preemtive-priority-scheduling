@@ -1,115 +1,80 @@
-#include<stdio.h> 
- 
-int main() 
-{ 
-      int i, limit, total = 0, x, counter = 0, time_quantum,j; 
-      
-	  int wait_time = 0, turnaround_time = 0,pos,z,p[10],prio[10], a_time[10], b_time[10], temp[10],b; 
-      
-	  float average_wait_time, average_turnaround_time;
-      
-	  printf("\nEnter Total Number of Processes:"); 
-      
-	  scanf("%d", &limit); 
-      
-	  x = limit; 
-      for(i = 0; i < limit; i++) 
-      {
-	    p[i]=i+1;
-	   
-	    prio[i]=0;
-            printf("\nEnter total Details of Process[%d]\n", i + 1);
-            printf("Arrival Time:\t");
-            scanf("%d", &a_time[i]);
-            printf("Burst Time:\t");
-            scanf("%d", &b_time[i]); 
-            temp[i] = b_time[i];
-      }
-	   
-      printf("\nEnter the Time Quantum:"); 
-      scanf("%d", &time_quantum); 
-      printf("\nProcess ID\t\tBurst Time\t Turnaround Time\t Waiting Time\t Priority\n");
-      for(total = 0, i = 0; x != 0;) 
-      { 
-
-		    for(z=0;z<limit;z++)
-		    {
-			int temp1;
-			pos=z;
-			for(j=z+1;j<limit;j++)
-			{
-			    if(prio[j]<prio[pos])
-				pos=j;
-			}
-		 
-		temp1=prio[z];
-	
-		prio[z]=prio[pos];
-	
-		prio[pos]=temp1;
-		 
-			temp1=b_time[z];
-			b_time[z]=b_time[pos];
-			b_time[pos]=temp1;
-		 			temp1=a_time[z];
-				a_time[z]=a_time[pos];
-			a_time[pos]=temp1;
-
-			temp1=p[z];
-				p[z]=p[pos];
-			p[pos]=temp1;
-
-			temp1=temp[z];
-				temp[z]=temp[pos];
-			temp[pos]=temp1;
-		    }
-		{
-		}
-            
-			if(temp[i] <= time_quantum && temp[i] > 0) 
-            { 
-                  total = total + temp[i]; 
-                  temp[i] = 0; 
-                  counter = 1; 
-            } 
-            
-			else if(temp[i] > 0) 
-            { 
-                  temp[i] = temp[i] - time_quantum; 
-                  total = total + time_quantum; 
-            } 
-
-	for(b=0;b<limit;b++)
-		{
-			if(b==i)
-			prio[b]+=1;
-			else
-			prio[b]+=2;
-		}
-
-            if(temp[i] == 0 && counter == 1) 
-            { 
-                  x--; 
-                  printf("\nProcess[%d]\t\t%d\t\t %d\t\t %d\t\t%d", p[i], b_time[i], total - a_time[i], total - a_time[i] - b_time[i],prio[i]);
-                  wait_time = wait_time + total - a_time[i] - b_time[i]; 
-                  turnaround_time = turnaround_time + total - a_time[i]; 
-                  counter = 0; 
-            } 
-            if(i == limit - 1) 
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h> 
+#include<sys/types.h>
+#include<unistd.h> 
+int main()
+{
+    int bt[20],at[10],n,i,j,k,l,sum=0,temp,p[10],st[10],ft[10],wt[10],ta[10],pn[10];
+    printf("Enter the number of process:");
+    scanf("%d",&n);
+    for(i=0; i<n; i++)
+    {
+    	pn[i]=i+1;
+		printf("\nProccess %d",pn[i]);
+        printf("\nArrival Time:");
+        scanf("%d",&at[i]);
+        printf("\nBurst Time:");
+        scanf("%d",&bt[i]);
+        printf("\nPriority:");
+        scanf("%d",&p[i]);
+    }
+    for(i=0; i<n; i++)
+	{
+		for(j=0; j<n; j++)
+        {
+            if(p[i]<p[j] && at[i]<=at[j])
             {
-                  i = 0; 
-            
-			}
-            else if(a_time[i + 1] <= total) 
-            {
-                  i++;
-            
-			}
-            else 
-            {
-                  i = 0;
-            
-			}		
-      } 
-      return 0; 
+				temp=p[i];
+                p[i]=p[j];
+                p[j]=temp;
+                temp=at[i];
+                at[i]=at[j];
+                at[j]=temp;
+                temp=bt[i];
+                bt[i]=bt[j];
+                bt[j]=temp;
+                temp=pn[i];
+                pn[i]=pn[j];
+                pn[j]=temp;
+            }
+        }
+        for(k=0;k<=bt[i];k++)
+                {
+                	sum=sum+1;
+                	if(sum%2==0)
+                	{
+                		for(l=i+1;l<n;l++)
+                		{
+                			p[l]=p[l]-1;
+						}
+					}
+				}
+	}
+    for(i=0; i<n; i++)
+ 	{
+ 		if(i==0)
+        {
+            st[i]=at[i];
+            wt[i]=st[i]-at[i];
+            ft[i]=st[i]+bt[i];
+            ta[i]=ft[i]-at[i];
+        }
+        else
+        {
+            st[i]=ft[i-1];
+            wt[i]=st[i]-at[i];
+            ft[i]=st[i]+bt[i];
+            ta[i]=ft[i]-at[i];
+        }
+    }
+    printf("________________________________________________________________________________________");
+    printf("\n|P No.\tArrival Time\tBurst Time\tPriority\tWaiting Time\tTurnaround Time |");
+    for(i=0; i<n; i++)
+    {
+    	printf("\n|---------------------------------------------------------------------------------------|");
+    	printf("\n|%d\t|%d\t\t|%d\t\t|%d\t\t|%d\t\t|%d\t\t|",pn[i],at[i],bt[i],p[i],wt[i],ta[i]);
+	}
+	printf("\n|_______________________________________________________________________________________|");
+    getch();
 }
